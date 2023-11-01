@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- El elemento head contiene metadatos y enlaces a recursos externos como archivos CSS y JavaScript. Aquí, se define el título de la página y se vinculan los estilos CSS y Bootstrap. -->
+    <title>Combinaciones para Sumar un Número Objetivo</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Vincula el archivo CSS personalizado -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Vincula Bootstrap -->
+</head>
+
+<body>
+    >
+    <div id="container" class="container">
+        <!-- El contenedor principal del contenido está centrado en la página. -->
+        <h1 class="text-center">Combinaciones para Sumar un Número Objetivo</h1>
+        <!-- Se crea un encabezado principal. -->
+        <div class="form-group">
+            <!-- Se crea un grupo de formulario para ingresar el número objetivo. -->
+            <label for="numeroObjetivo">Número Objetivo:</label>
+            <input type="number" class="form-control" id="numeroObjetivo">
+            <!-- Se proporciona un campo de entrada numérica. -->
+        </div>
+        <div class="form-group">
+            <!-- Se crea otro grupo de formulario para ingresar los números disponibles. -->
+            <label for="numeros">Números disponibles (separados por comas):</label>
+            <input type="text" class="form-control" id="numeros">
+            <!-- Se proporciona un campo de texto para ingresar una lista de números separados por comas. -->
+        </div>
+        <button class="btn btn-primary" onclick="encontrarCombinaciones()">Encontrar Combinaciones</button>
+        <!-- Se crea un botón para iniciar la función que busca las combinaciones. -->
+        <div id="combinaciones" class="mt-3"></div>
+        <!-- Aquí se mostrarán las combinaciones encontradas. -->
+    </div>
+
+    <script>
+        // En la sección de script, se define la lógica para encontrar las combinaciones que suman el número objetivo.
+
+        // La función encontrarCombinaciones se activa cuando el botón "Encontrar Combinaciones" se hace clic.
+        function encontrarCombinaciones() {
+            // La función obtenerá el número objetivo y los números disponibles ingresados por el usuario.
+            const numeroObjetivo = parseInt(document.getElementById("numeroObjetivo").value);
+            const numeros = document.getElementById("numeros").value
+                .split(',') // Divide la cadena en una matriz en función de las comas.
+                .map(num => parseInt(num)) // Convierte cada elemento de la matriz en un número entero.
+                .filter(num => !isNaN(num)); // Filtra los elementos no numéricos de la matriz.
+
+            const combinaciones = [];
+
+            // Se define una función recursiva para encontrar las combinaciones que suman al número objetivo.
+            function encontrarCombinacionesRecursivo(actual, objetivo, indice, combinacion_actual) {
+                // La función se llama recursivamente para encontrar combinaciones que sumen al objetivo.
+                if (objetivo == 0) {
+                    combinaciones.push([...combinacion_actual]);
+                    // Si se encuentra una combinación que suma al objetivo, se agrega a la lista de combinaciones.
+                    return;
+                }
+                if (objetivo < 0 || indice >= numeros.length) {
+                    return;
+                    // Se detiene la recursión si se supera el objetivo o se llega al final de la lista de números.
+                }
+                for (let i = indice; i < numeros.length; i++) {
+                    combinacion_actual.push(numeros[i]);
+                    // Se agrega un número a la combinación actual y se continúa la búsqueda recursiva.
+                    encontrarCombinacionesRecursivo(actual + numeros[i], objetivo - numeros[i], i, combinacion_actual);
+                    combinacion_actual.pop();
+                    // Se deshace el último número agregado para explorar otras combinaciones.
+                }
+            }
+
+            // Se llama a la función inicial con valores iniciales.
+            encontrarCombinacionesRecursivo(0, numeroObjetivo, 0, []);
+
+            // Después de encontrar las combinaciones, se muestran en el documento.
+            const combinacionesDiv = document.getElementById("combinaciones");
+            combinacionesDiv.innerHTML = "";
+            if (combinaciones.length === 0) {
+                combinacionesDiv.innerHTML = "No se encontraron combinaciones.";
+                // Si no se encuentran combinaciones, se muestra un mensaje indicando la ausencia de combinaciones.
+            } else {
+                combinaciones.forEach(combinacion => {
+                    combinacionesDiv.innerHTML += `[${combinacion.join(', ')}]<br>`;
+                    // Las combinaciones encontradas se muestran en el documento separadas por comas y entre corchetes.
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
